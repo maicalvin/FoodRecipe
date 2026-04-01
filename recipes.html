@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renal-Friendly Recipes - NutriCare</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🥗 NutriCare Recipes</h1>
+                <p class="tagline">Renal-Friendly Recipes</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">Home</a> / <span>Renal Recipes</span>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Cuisine Selection Section -->
+            <section class="cuisine-selector">
+                <h2>Select Cuisine Type</h2>
+                <div class="cuisine-tabs">
+                    <button class="tab-btn active" onclick="filterByCuisine('all')">All Recipes</button>
+                    <button class="tab-btn" onclick="filterByCuisine('chinese')">🇨🇳 Chinese</button>
+                    <button class="tab-btn" onclick="filterByCuisine('western')">🇺🇸 Western</button>
+                    <button class="tab-btn" onclick="filterByCuisine('thai')">🇹🇭 Thai</button>
+                </div>
+            </section>
+
+            <!-- Ingredient-Based Recipe Finder Section -->
+            <section class="ingredient-finder-section">
+                <div class="finder-header">
+                    <h3>🔍 Find Recipes by Ingredients You Have</h3>
+                    <p>Select ingredients from your pantry and we'll suggest recipes you can make</p>
+                </div>
+                <div class="ingredient-input-container">
+                    <input type="text" id="ingredientInput" placeholder="Type ingredient name (e.g., chicken, garlic, rice)..." 
+                           class="ingredient-input" onkeyup="updateIngredientSuggestions()">
+                    <div class="ingredient-suggestions" id="ingredientSuggestions" style="display: none;"></div>
+                </div>
+                <div class="selected-ingredients">
+                    <p>Selected Ingredients:</p>
+                    <div class="ingredients-tags" id="selectedIngredientsTags"></div>
+                </div>
+                <button class="btn btn-primary find-recipes-btn" onclick="findRecipesByIngredients()" style="margin-top: 15px;">
+                    🍴 Find Recipes with Selected Ingredients
+                </button>
+                <div class="ingredient-results" id="ingredientResults" style="display: none; margin-top: 20px;"></div>
+            </section>
+
+            <!-- Search and Filter Section -->
+            <section class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search recipes by name or ingredient..." onkeyup="searchRecipes()">
+                    <button onclick="clearSearch()">Clear</button>
+                </div>
+                <div class="filter-options">
+                    <select id="mealTypeFilter" onchange="filterRecipes()">
+                        <option value="">All Meal Types</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                        <option value="dessert">Dessert</option>
+                    </select>
+                    <select id="prepTimeFilter" onchange="filterRecipes()">
+                        <option value="">Preparation Time</option>
+                        <option value="quick">Quick (< 30 min)</option>
+                        <option value="medium">Medium (30-60 min)</option>
+                        <option value="long">Longer (> 60 min)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Recipe Count Display -->
+            <div class="recipe-count">
+                <p id="recipeCountText">Loading recipes...</p>
+            </div>
+
+            <!-- Recipes Grid -->
+            <section class="recipes-grid" id="recipesGrid">
+                <p class="loading">Loading recipes...</p>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 NutriCare Recipes. Consult with a healthcare provider before making dietary changes.</p>
+        </footer>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeRecipeModal()">&times;</span>
+            <div class="modal-header-buttons">
+                <button class="btn btn-small" onclick="downloadRecipeAsPNG()" title="Download recipe as PNG image">
+                    📥 Download as PNG
+                </button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="js/recipes.js"></script>
+</body>
+</html>

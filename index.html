@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriCare Recipes - Specialized Recipes for Health Conditions</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🥗 NutriCare Recipes</h1>
+                <p class="tagline">Specialized recipes for your health needs</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="intro-section">
+                <h2>Welcome to NutriCare Recipes</h2>
+                <p>Choose your health condition to discover delicious, nutritionally tailored recipes designed specifically for your dietary needs.</p>
+            </div>
+
+            <!-- Health Condition Selector -->
+            <section class="conditions-section">
+                <h3>Select Your Health Condition</h3>
+                <div class="conditions-grid">
+                    <!-- Renal Disease -->
+                    <div class="condition-card" data-condition="renal">
+                        <div class="condition-icon">🫘</div>
+                        <h4>Chronic Kidney Disease (CKD)</h4>
+                        <p>Low sodium, potassium, and phosphorus recipes designed for kidney health</p>
+                        <button class="btn btn-primary" onclick="selectCondition('renal')">Select</button>
+                    </div>
+
+                    <!-- Diabetes -->
+                    <div class="condition-card" data-condition="diabetes">
+                        <div class="condition-icon">🩺</div>
+                        <h4>Diabetes Management</h4>
+                        <p>Low glycemic index recipes to help manage blood sugar levels</p>
+                        <button class="btn btn-secondary" onclick="selectCondition('diabetes')" disabled title="Coming soon">Coming Soon</button>
+                    </div>
+
+                    <!-- Hypertension -->
+                    <div class="condition-card" data-condition="hypertension">
+                        <div class="condition-icon">❤️</div>
+                        <h4>Hypertension</h4>
+                        <p>Low sodium recipes to support heart health and blood pressure control</p>
+                        <button class="btn btn-secondary" onclick="selectCondition('hypertension')" disabled title="Coming soon">Coming Soon</button>
+                    </div>
+
+                    <!-- Heart Disease -->
+                    <div class="condition-card" data-condition="heart">
+                        <div class="condition-icon">💓</div>
+                        <h4>Heart Disease</h4>
+                        <p>Low cholesterol and saturated fat recipes for cardiac health</p>
+                        <button class="btn btn-secondary" onclick="selectCondition('heart')" disabled title="Coming soon">Coming Soon</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Information Section -->
+            <section class="info-section">
+                <div class="info-box">
+                    <h3>About Renal-Friendly Cooking</h3>
+                    <p>Our renal-friendly recipes are specially developed to help manage Chronic Kidney Disease (CKD) by limiting:</p>
+                    <ul>
+                        <li><strong>Sodium:</strong> Reduced salt intake to help control blood pressure</li>
+                        <li><strong>Potassium:</strong> Limited potassium to protect kidney function</li>
+                        <li><strong>Phosphorus:</strong> Reduced phosphorus to prevent bone problems</li>
+                        <li><strong>Protein:</strong> Appropriate protein portions for kidney health</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 NutriCare Recipes. Consult with a healthcare provider before making dietary changes.</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
