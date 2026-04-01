@@ -753,14 +753,16 @@ body {
 
 /* Theme Refresh */
 :root {
-    --bg: #f3f6f2;
-    --surface: #fffdf7;
+    --bg: #f7f5f1;
+    --surface: #fffdf9;
     --surface-2: #fff;
-    --ink: #1f2f2a;
-    --muted: #50615b;
-    --accent: #0f8b6d;
-    --accent-2: #ff7a59;
-    --ring: #bfdac8;
+    --ink: #2c2924;
+    --muted: #635a4f;
+    --accent: #2f8f5b;
+    --accent-2: #f47a2a;
+    --accent-red: #d64a3a;
+    --earth: #8a6b4f;
+    --ring: #d7d1c8;
     --shadow: 0 10px 28px rgba(33, 66, 53, 0.12);
 }
 
@@ -768,13 +770,13 @@ body {
     font-family: 'Space Grotesk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--ink);
     background:
-        radial-gradient(circle at 10% 15%, rgba(15, 139, 109, 0.18), transparent 42%),
-        radial-gradient(circle at 80% 0%, rgba(255, 122, 89, 0.2), transparent 35%),
+    radial-gradient(circle at 10% 15%, rgba(47, 143, 91, 0.16), transparent 42%),
+    radial-gradient(circle at 80% 0%, rgba(244, 122, 42, 0.18), transparent 35%),
         var(--bg);
 }
 
 .header {
-    background: linear-gradient(120deg, #0f8b6d 0%, #127c63 45%, #ff7a59 100%);
+    background: linear-gradient(120deg, #2f8f5b 0%, #3f9e65 42%, #f47a2a 78%, #d64a3a 100%);
     box-shadow: 0 18px 38px rgba(19, 84, 66, 0.32);
 }
 
@@ -797,13 +799,13 @@ body {
 .recipe-image,
 .ingredient-finder-section,
 .match-badge {
-    background: linear-gradient(125deg, #0f8b6d 0%, #16a085 55%, #ff7a59 100%);
+    background: linear-gradient(125deg, #2f8f5b 0%, #49a36d 46%, #f47a2a 76%, #d64a3a 100%);
 }
 
 .btn-primary:hover:not(:disabled),
 .result-recipe-btn:hover,
 .download-btn:hover {
-    box-shadow: 0 10px 24px rgba(15, 139, 109, 0.35);
+    box-shadow: 0 10px 24px rgba(47, 143, 91, 0.35);
 }
 
 .breadcrumb a,
@@ -814,7 +816,7 @@ body {
 .guidance-value,
 .nutrition-item .value,
 .results-header h3 {
-    color: #0a6d57;
+    color: #2f8f5b;
 }
 
 .search-box input,
@@ -823,11 +825,74 @@ body {
     border-color: var(--ring);
 }
 
+.intro-section h2,
+.info-box {
+    border-color: rgba(47, 143, 91, 0.18);
+}
+
+.intro-section h2,
+.info-box h3,
+.detail-info-box h4,
+.recipe-detail h3,
+.ingredients-list li:before,
+.instructions-list li:before,
+.nutrition-badge strong {
+    color: var(--accent);
+}
+
+.recipe-detail h3 {
+    border-bottom-color: #eddcc8;
+}
+
+.detail-info-box {
+    border-left-color: var(--accent-2);
+}
+
+.instructions-list li:before {
+    background: var(--accent-2);
+    color: #fff;
+}
+
+.condition-card[data-condition="renal"] {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(47, 143, 91, 0.08), rgba(244, 122, 42, 0.08));
+}
+
+.renal-guidance-panel {
+    background: #fff6ec;
+    border: 1px solid #f1deca;
+    border-left: 5px solid var(--accent-2);
+}
+
+.renal-guidance-panel h3,
+.guidance-target,
+.guidance-value,
+.nutrition-total,
+.ingredient-result-nutrition {
+    color: var(--earth);
+}
+
+.renal-guidance-panel p {
+    color: var(--muted);
+}
+
+.guidance-target {
+    border-color: #f1deca;
+}
+
+.search-box button {
+    background: linear-gradient(130deg, var(--accent-2) 0%, var(--accent-red) 100%);
+}
+
+.search-box button:hover {
+    background: linear-gradient(130deg, #ea6e1e 0%, #bd3f31 100%);
+}
+
 .search-box input:focus,
 .filter-options select:focus,
 .tab-btn:hover {
-    border-color: #16a085;
-    color: #0c7f63;
+    border-color: #f47a2a;
+    color: #2f8f5b;
 }
 
 .nutrition-badge,
@@ -836,7 +901,7 @@ body {
 .nutrition-item,
 .renal-guidance-item {
     background: var(--surface-2);
-    border-color: #d7eee4;
+    border-color: #eee4d8;
 }
 
 .recipe-detail-layout {
@@ -851,8 +916,8 @@ body {
 }
 
 .recipe-side-column {
-    background: linear-gradient(180deg, #f6fff9 0%, #fff7f2 100%);
-    border: 1px solid #d7eee4;
+    background: linear-gradient(180deg, #fbfff9 0%, #fff7ef 70%, #fff2eb 100%);
+    border: 1px solid #eee4d8;
     border-radius: 12px;
     padding: 16px;
     position: sticky;
@@ -943,12 +1008,12 @@ body {
 
 /* Ingredient Finder Section Styles */
 .ingredient-finder-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2f8f5b 0%, #489d68 35%, #f47a2a 75%, #d64a3a 100%);
     padding: 30px;
     border-radius: 12px;
     margin-bottom: 40px;
     color: white;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 8px 20px rgba(107, 78, 49, 0.2);
 }
 
 .ingredient-finder-section h2 {
@@ -1019,8 +1084,8 @@ body {
 }
 
 .suggestion-item:hover {
-    background: #f5f5f5;
-    color: #667eea;
+    background: #fdf4ea;
+    color: #2f8f5b;
     font-weight: 500;
 }
 
@@ -1085,7 +1150,7 @@ body {
     font-size: 1em;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.95);
-    color: #667eea;
+    color: #d64a3a;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -1096,9 +1161,9 @@ body {
 }
 
 .find-recipes-btn:hover {
-    background: white;
+    background: #fff4ea;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px rgba(138, 107, 79, 0.22);
 }
 
 .find-recipes-btn:active {
@@ -1156,13 +1221,13 @@ body {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f47a2a 0%, #d64a3a 100%);
     color: white;
     padding: 8px 14px;
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.9em;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(214, 74, 58, 0.28);
 }
 
 .result-recipe-content {
@@ -1173,7 +1238,7 @@ body {
 }
 
 .result-recipe-content h4 {
-    color: #667eea;
+    color: #2f8f5b;
     margin-bottom: 10px;
     font-size: 1.2em;
 }
@@ -1207,7 +1272,7 @@ body {
 }
 
 .matched-ingredient {
-    background: #667eea;
+    background: #2f8f5b;
     color: white;
     padding: 4px 10px;
     border-radius: 12px;
@@ -1217,7 +1282,7 @@ body {
 .result-recipe-btn {
     width: 100%;
     padding: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2f8f5b 0%, #f47a2a 100%);
     color: white;
     border: none;
     border-radius: 6px;
@@ -1229,7 +1294,7 @@ body {
 
 .result-recipe-btn:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(47, 143, 91, 0.3);
 }
 
 /* Modal Header Buttons */
@@ -1246,7 +1311,7 @@ body {
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2f8f5b 0%, #f47a2a 100%);
     color: white;
     border: none;
     border-radius: 6px;
@@ -1254,12 +1319,12 @@ body {
     font-size: 0.95em;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 4px 12px rgba(47, 143, 91, 0.2);
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 6px 20px rgba(47, 143, 91, 0.3);
 }
 
 .download-btn:active {
