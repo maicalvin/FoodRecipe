@@ -1,177 +1,228 @@
 import json
-import random
+from pathlib import Path
 
-# Define recipe templates for each cuisine
+DATA_PATH = Path("data/recipes.json")
 
-chinese_base_recipes = [
-    ("Steamed White Fish", "🐟", "lunch", 20),
-    ("Stir-Fried Cabbage", "🥬", "dinner", 15),
-    ("Egg Fried Rice", "🍚", "lunch", 20),
-    ("Ginger Chicken Soup", "🍲", "lunch", 35),
-    ("Steamed Bok Choy", "🥬", "dinner", 10),
-    ("Cashew Chicken", "🍗", "dinner", 25),
-    ("Cucumber Salad", "🥒", "lunch", 15),
-    ("Steamed Pork", "🍖", "dinner", 30),
-    ("Braised Tofu", "🟫", "lunch", 30),
-    ("Fish with Black Beans", "🐟", "dinner", 25),
-    ("Chicken Rice Soup", "🍚", "lunch", 30),
-    ("Stir-Fried Broccoli", "🥦", "dinner", 12),
-    ("Mushroom Soup", "🍄", "lunch", 25),
-    ("Rice Noodle Soup", "🍜", "lunch", 20),
-    ("Poached Chicken with Corn", "🌽", "dinner", 30),
-    ("Steamed Tofu", "⬜", "lunch", 15),
-    ("Carrot Stir-Fry", "🥕", "dinner", 15),
-    ("Egg Drop Soup", "🥣", "lunch", 20),
-    ("Green Bean Stir-Fry", "🥒", "dinner", 15),
-    ("Jasmine Rice Pilaf", "🍚", "lunch", 20),
-]
 
-western_base_recipes = [
-    ("Garlic Baked Cod", "🐟", "dinner", 25),
-    ("Roasted Chicken", "🍗", "dinner", 35),
-    ("Green Bean Casserole", "🥒", "dinner", 40),
-    ("Turkey Meatballs", "🍖", "dinner", 35),
-    ("Baked Sweet Potato", "🍠", "lunch", 45),
-    ("Egg White Scramble", "🍳", "breakfast", 10),
-    ("Rice Pilaf", "🍚", "lunch", 30),
-    ("Glazed Pork", "🍖", "dinner", 35),
-    ("Grilled Tilapia", "🐟", "dinner", 20),
-    ("Turkey Meatloaf", "🍖", "dinner", 50),
-    ("Steamed Broccoli", "🥦", "dinner", 15),
-    ("Chicken Breast", "🍗", "dinner", 20),
-    ("Roasted Vegetables", "🥕", "lunch", 35),
-    ("Pan-Seared Fish", "🐟", "dinner", 15),
-    ("Turkey Burgers", "🍔", "lunch", 25),
-    ("Baked Cod", "🐟", "dinner", 30),
-    ("Egg Frittata", "🍳", "breakfast", 25),
-    ("Herb Roasted Turkey", "🦃", "dinner", 60),
-    ("Zucchini Noodles", "🌿", "lunch", 12),
-    ("Chicken Salad", "🥗", "lunch", 15),
-]
+def normalize_name(name: str) -> str:
+    return (name or "").strip().lower()
 
-thai_base_recipes = [
-    ("Tom Yum Soup", "🍲", "lunch", 25),
-    ("Pad Thai", "🍜", "dinner", 20),
-    ("Green Curry", "🍛", "dinner", 30),
-    ("Thai Basil Chicken", "🍗", "dinner", 15),
-    ("Steamed Shrimp", "🦐", "lunch", 15),
-    ("Coconut Rice", "🥥", "lunch", 25),
-    ("Cucumber Salad", "🥒", "lunch", 15),
-    ("Fish Cakes", "🍡", "lunch", 30),
-    ("Red Curry", "🍛", "dinner", 30),
-    ("Pad See Ew", "🍝", "dinner", 20),
-    ("Garlic Shrimp", "🦐", "dinner", 15),
-    ("Lemongrass Soup", "🍲", "lunch", 30),
-    ("Thai Basil Pork", "🍖", "dinner", 20),
-    ("Eggplant Stir-Fry", "🍆", "dinner", 15),
-    ("Fish Soup", "🐟", "lunch", 25),
-    ("Spring Rolls", "🥢", "lunch", 25),
-    ("Massaman Curry", "🍛", "dinner", 40),
-    ("Crab Cakes", "🦀", "lunch", 25),
-    ("Glass Noodle Stir-Fry", "🍝", "dinner", 20),
-    ("Pineapple Rice", "🍍", "lunch", 25),
-]
 
-def generate_recipes(base_recipes, cuisine, start_id):
-    recipes = []
-    for i, (base_name, emoji, meal_type, prep_time) in enumerate(base_recipes, start=start_id):
-        # Create variations
-        for variation in range(6):  # 6 variations per base recipe
-            recipe_id = start_id + len(recipes)
-            
-            # Add variation to name
-            variations = [
-                f"{base_name} with Herbs",
-                f"{base_name} - Style A",
-                f"{base_name} - Classic",
-                f"{base_name} - Fresh",
-                f"{base_name} - Steamed",
-                f"{base_name} - Light",
-            ]
-            
-            name = variations[variation]
-            
-            # Generate nutritional info
-            nutrition = {
-                "calories": str(random.randint(120, 350)),
-                "potassium": f"{random.randint(140, 500)}mg",
-                "phosphorus": f"{random.randint(40, 280)}mg",
-                "sodium": f"{random.randint(60, 180)}mg",
-                "protein": f"{random.randint(2, 36)}g",
-                "fiber": f"{random.uniform(0, 3):.1f}g"
-            }
-            
-            ingredients = [
-                f"Main protein component for {cuisine} cuisine",
-                f"Fresh {random.choice(['garlic', 'ginger', 'herbs', 'spices'])}",
-                f"Seasonal vegetables",
-                f"Low-sodium seasoning",
-                f"Cooking oil (2 tbsp)",
-                f"Water or low-sodium broth",
-            ]
-            
-            instructions = [
-                "Prepare all ingredients",
-                "Heat oil in wok or pan",
-                "Add aromatics and cook",
-                "Add main protein",
-                "Add vegetables and seasonings",
-                "Cook until done",
-                "Serve hot or cold"
-            ]
-            
-            renal_notes = [
-                "Low sodium and mineral-controlled preparation suitable for renal patients",
-                "Moderate portions recommended for phosphorus management",
-                "Excellent protein source with kidney-friendly minerals",
-                "Great choice for CKD stage 3-4 patients",
-                "Watch portion sizes for potassium management",
-                "Low-sodium preparation preserves kidney function"
-            ]
-            
-            recipe = {
-                "id": recipe_id,
-                "name": name,
-                "cuisine": cuisine,
-                "emoji": emoji,
-                "description": f"{name} - specially prepared for renal health",
-                "mealType": meal_type,
-                "prepTime": prep_time + random.randint(-5, 10),
-                "servings": random.randint(2, 4),
-                "difficulty": random.choice(["Easy", "Medium", "Hard"]),
-                "ingredients": ingredients,
-                "instructions": instructions,
-                "nutritionInfo": nutrition,
-                "renalNote": random.choice(renal_notes)
-            }
-            
-            recipes.append(recipe)
-    
-    return recipes
+def pick_method(name: str) -> str:
+    n = normalize_name(name)
+    if "salad" in n:
+        return "salad"
+    if "baked" in n or "roasted" in n or "casserole" in n or "meatloaf" in n or "frittata" in n:
+        return "oven"
+    if "grilled" in n:
+        return "grill"
+    if "stir-fried" in n or "stir-fry" in n or "pad " in n or "krapow" in n or "grapow" in n:
+        return "stir_fry"
+    if "steamed" in n:
+        return "steam"
+    if "soup" in n or "congee" in n or "curry" in n or "chili" in n:
+        return "simmer"
+    if "braised" in n:
+        return "braise"
+    if "poached" in n:
+        return "poach"
+    if "fried rice" in n:
+        return "fried_rice"
+    return "saute"
 
-# Generate recipes
-all_recipes = []
 
-# Chinese recipes (120 unique recipes)
-chinese_recipes = generate_recipes(chinese_base_recipes, "Chinese", 1)
-all_recipes.extend(chinese_recipes)
+def pick_main_protein(name: str) -> tuple[str, int]:
+    n = normalize_name(name)
+    if "cod" in n:
+        return ("cod fillet", 180)
+    if "tilapia" in n:
+        return ("tilapia fillet", 180)
+    if "salmon" in n:
+        return ("salmon fillet", 170)
+    if "fish" in n:
+        return ("white fish fillet", 180)
+    if "shrimp" in n:
+        return ("shrimp, peeled and deveined", 180)
+    if "crab" in n:
+        return ("crab meat", 160)
+    if "turkey" in n:
+        return ("lean turkey", 220)
+    if "pork" in n or "moo" in n:
+        return ("lean pork", 200)
+    if "chicken" in n or "gai" in n:
+        return ("skinless chicken breast", 220)
+    if "egg" in n:
+        return ("egg whites", 180)
+    if "tofu" in n:
+        return ("firm tofu", 220)
+    return ("protein of choice", 180)
 
-# Western recipes (120 unique recipes)
-western_recipes = generate_recipes(western_base_recipes, "Western", len(all_recipes) + 1)
-all_recipes.extend(western_recipes)
 
-# Thai recipes (120 unique recipes)
-thai_recipes = generate_recipes(thai_base_recipes, "Thai", len(all_recipes) + 1)
-all_recipes.extend(thai_recipes)
+def cuisine_ingredients(cuisine: str) -> list[str]:
+    if cuisine == "Chinese":
+        return [
+            "garlic, minced (8 g)",
+            "ginger, julienned matchsticks (10 g)",
+            "green onion, 3 mm slices (20 g)",
+            "low-sodium soy sauce (12 ml)",
+            "sesame oil (5 ml)",
+            "canola oil (10 ml)",
+        ]
+    if cuisine == "Thai":
+        return [
+            "garlic, minced (8 g)",
+            "fresh ginger or galangal, thin slices (10 g)",
+            "lemongrass, finely sliced (12 g)",
+            "low-sodium fish sauce (8 ml)",
+            "lime juice (10 ml)",
+            "rice bran oil (10 ml)",
+        ]
+    return [
+        "garlic, minced (8 g)",
+        "yellow onion, 8 mm dice (60 g)",
+        "fresh parsley, chopped (8 g)",
+        "olive oil (10 ml)",
+        "lemon juice (10 ml)",
+        "ground black pepper (1 g)",
+    ]
 
-# Create output
-output = {"recipes": all_recipes}
 
-# Save to file
-with open("data/recipes.json", "w") as f:
-    json.dump(output, f, indent=2)
+def build_ingredients(recipe: dict) -> list[str]:
+    cuisine = recipe.get("cuisine", "Western")
+    method = pick_method(recipe.get("name", ""))
+    protein_name, protein_g = pick_main_protein(recipe.get("name", ""))
 
-print(f"Generated {len(all_recipes)} renal-friendly recipes")
-print(f"Chinese: {len(chinese_recipes)}")
-print(f"Western: {len(western_recipes)}")
-print(f"Thai: {len(thai_recipes)}")
+    ingredients = [f"{protein_name} ({protein_g} g)"]
+
+    if method in {"soup", "simmer", "poach", "braise", "congee"}:
+        ingredients.append("low-sodium broth (700 ml)")
+    if method == "fried_rice" or "rice" in normalize_name(recipe.get("name", "")):
+        ingredients.append("cooked rice, chilled (260 g)")
+    if "noodle" in normalize_name(recipe.get("name", "")) or "pad" in normalize_name(recipe.get("name", "")):
+        ingredients.append("rice noodles, soaked and drained (180 g)")
+
+    ingredients.extend([
+        "carrot, 5 mm half-moons (70 g)",
+        "zucchini or cabbage, 2 cm strips (100 g)",
+    ])
+    ingredients.extend(cuisine_ingredients(cuisine))
+
+    # Keep ingredient list compact and consistent for UI readability.
+    return ingredients[:10]
+
+
+def build_instructions(recipe: dict) -> list[str]:
+    name = recipe.get("name", "Recipe")
+    cuisine = recipe.get("cuisine", "Western")
+    method = pick_method(name)
+    prep = int(recipe.get("prepTime", 25) or 25)
+
+    common_prep = [
+        "Pat protein dry; trim visible fat; cut to 3-4 cm pieces if not fillet.",
+        "Prepare vegetables: onion 8 mm dice, carrot 5 mm slices, leafy vegetables 3 cm strips.",
+        "Measure seasonings in separate bowls to control sodium and avoid over-seasoning.",
+    ]
+
+    if method == "steam":
+        return common_prep + [
+            "Set steamer water to a gentle boil over high heat, then reduce to medium so steam stays steady.",
+            "Arrange protein in a single layer; add ginger/garlic/scallion and 1 tbsp low-sodium sauce.",
+            "Steam covered for 8-12 minutes (fish) or 14-16 minutes (chicken/pork) until core reaches 74 C.",
+            "Rest 2 minutes; drizzle 1 tsp aromatic oil; garnish and serve immediately.",
+        ]
+
+    if method == "stir_fry":
+        return common_prep + [
+            "Preheat wok until lightly smoking over high heat; add 2 tsp oil and swirl to coat.",
+            "Stir-fry protein on high heat for 2-3 minutes until 80% cooked; remove to a warm plate.",
+            "Add vegetables; stir-fry 2 minutes on high heat, then 1 minute on medium heat to soften.",
+            "Return protein, add sauce, and toss 60-90 seconds until glossy and fully cooked.",
+            "Finish with lime/lemon and herbs; total wok time 6-8 minutes.",
+        ]
+
+    if method == "fried_rice":
+        return common_prep + [
+            "Heat wok on medium-high; add oil and scramble egg/egg white for 45-60 seconds; remove.",
+            "Add chilled rice and press with spatula to break clumps; stir-fry 2 minutes on high heat.",
+            "Add diced vegetables and aromatics; cook 2 minutes, keeping grains separate.",
+            "Return egg and season lightly; toss 1 minute over medium-high heat.",
+            "Serve hot; target total cook time 7-8 minutes.",
+        ]
+
+    if method == "oven":
+        return common_prep + [
+            "Preheat oven to 200 C (fan 190 C); line tray with parchment.",
+            "Season protein and vegetables with measured oil and herbs; spread in one layer.",
+            "Bake at center rack for 18-22 minutes (fish) or 28-35 minutes (chicken/turkey), turning once.",
+            "Broil 1-2 minutes for browning if needed; rest 3 minutes before slicing.",
+            "Check doneness: poultry 74 C internal temperature; fish flakes easily.",
+        ]
+
+    if method == "grill":
+        return common_prep + [
+            "Preheat grill pan or grill to medium-high (about 220 C surface).",
+            "Brush grates lightly with oil; grill protein 3-4 minutes per side.",
+            "Lower to medium heat and finish 2-4 minutes until internal temperature reaches 74 C for poultry or fish flakes.",
+            "Grill vegetables 2-3 minutes, turning once.",
+            "Rest 2 minutes; squeeze lemon/lime and serve.",
+        ]
+
+    if method in {"simmer", "poach", "braise"}:
+        style = "Thai" if cuisine == "Thai" else ("Chinese" if cuisine == "Chinese" else "Western")
+        return common_prep + [
+            f"Bring broth to a light simmer over medium heat; add {style} aromatics and cook 3 minutes.",
+            "Add protein and keep at low simmer (small bubbles, not boiling) for 10-18 minutes.",
+            "Add vegetables in stages: hard vegetables first 5 minutes, leafy vegetables last 2 minutes.",
+            "Season to taste, then simmer 2 more minutes; total pot time 18-28 minutes.",
+            "Rest off heat for 2 minutes before serving to stabilize flavor.",
+        ]
+
+    if method == "salad":
+        return [
+            "Slice vegetables thinly: cucumber 2 mm rounds, onion 1 mm half-moons, herbs roughly chopped.",
+            "If using protein, poach or grill first, cool 5 minutes, then cut into 1 cm strips.",
+            "Whisk dressing: citrus juice, low-sodium seasoning, and 1 tsp oil until emulsified.",
+            "Toss vegetables and protein with dressing for 30 seconds; do not over-mix.",
+            "Chill 8-10 minutes before serving for best texture.",
+        ]
+
+    return common_prep + [
+        "Heat pan to medium-high and add oil.",
+        "Cook protein 4-8 minutes depending on thickness, then add vegetables.",
+        "Cook until vegetables are tender-crisp and protein is fully cooked.",
+        f"Finish seasoning and serve; total cook time about {max(10, prep - 5)} minutes.",
+    ]
+
+
+def enrich_recipe(recipe: dict) -> dict:
+    enriched = dict(recipe)
+    enriched["ingredients"] = build_ingredients(recipe)
+    enriched["instructions"] = build_instructions(recipe)
+
+    # Upgrade renal note wording to include practical cooking guidance.
+    renal = recipe.get("renalNote", "")
+    if "sodium" not in renal.lower():
+        renal = "Use low-sodium seasoning and measured portions to support renal dietary targets."
+    enriched["renalNote"] = renal
+    return enriched
+
+
+def main() -> None:
+    if not DATA_PATH.exists():
+        raise FileNotFoundError(f"Cannot find {DATA_PATH}")
+
+    with DATA_PATH.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    recipes = data.get("recipes", [])
+    enriched_recipes = [enrich_recipe(recipe) for recipe in recipes]
+
+    output = {"recipes": enriched_recipes}
+    with DATA_PATH.open("w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
+
+    print(f"Enriched {len(enriched_recipes)} recipes with detailed ingredients and instructions.")
+
+
+if __name__ == "__main__":
+    main()
