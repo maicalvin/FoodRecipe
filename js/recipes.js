@@ -16,22 +16,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Load recipes from JSON file
 function loadRecipes() {
-    fetch('data/recipes.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Unable to load recipes (${response.status})`);
-            }
-            return response.json();
-        })
+    const recipesGrid = document.getElementById('recipesGrid');
+    const recipeCountText = document.getElementById('recipeCountText');
+
+    const withTimeout = (promise, ms) => {
+        return Promise.race([
+            promise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Recipe request timed out')), ms))
+        ]);
+    };
+
+    const fetchRecipeFile = (filePath) => {
+        return withTimeout(fetch(filePath), 8000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Unable to load ${filePath} (${response.status})`);
+                }
+                return response.json();
+            });
+    };
+
+    fetchRecipeFile('data/recipes.json')
+        .catch(() => fetchRecipeFile('data/recipes-extended.json'))
         .then(data => {
             allRecipes = data.recipes || [];
             filteredRecipes = [...allRecipes];
+
+            if (!allRecipes.length) {
+                recipeCountText.textContent = 'No recipes found in data files.';
+                recipesGrid.innerHTML = '<p class="loading">No recipes are available right now.</p>';
+                return;
+            }
+
             displayRecipes(filteredRecipes);
         })
         .catch(error => {
             console.error('Error loading recipes:', error);
-            document.getElementById('recipesGrid').innerHTML = '<p class="loading">Error loading recipes. Please refresh the page.</p>';
+            recipeCountText.textContent = 'Unable to load recipes';
+            recipesGrid.innerHTML = '<p class="loading">Could not load recipes. If you opened this file directly, run a local server and open recipes.html from http://localhost.</p>';
         });
+
+    setTimeout(() => {
+        if (!allRecipes.length && recipesGrid && recipesGrid.textContent.includes('Loading recipes')) {
+            recipeCountText.textContent = 'Loading took too long';
+            recipesGrid.innerHTML = '<p class="loading">Loading is taking too long. Please refresh once or run from a local server.</p>';
+        }
+    }, 10000);
 }
 
 function parseNutrientMg(value) {
@@ -274,44 +304,48 @@ function openRecipeModal(recipeId) {
     modalBody.innerHTML = `
         <div class="recipe-detail">
             <h2>${recipe.name} ${recipe.emoji || ''}</h2>
-            
-            <div class="recipe-detail-info">
-                <div class="detail-info-box">
-                    <h4>Cuisine</h4>
-                    <p>${recipe.cuisine}</p>
-                </div>
-                <div class="detail-info-box">
-                    <h4>Preparation Time</h4>
-                    <p>${recipe.prepTime} minutes</p>
-                </div>
-                <div class="detail-info-box">
-                    <h4>Servings</h4>
-                    <p>${recipe.servings}</p>
-                </div>
-                <div class="detail-info-box">
-                    <h4>Difficulty</h4>
-                    <p>${recipe.difficulty}</p>
-                </div>
-            </div>
-            
-            <h3>Nutritional Information</h3>
-            <div class="nutrition-info">
-                ${nutritionHTML}
-            </div>
 
-            ${renalGuidanceHTML}
-            
-            ${renalNoteHTML}
-            
-            <h3>Ingredients</h3>
-            <ul class="ingredients-list">
-                ${ingredientsList}
-            </ul>
-            
-            <h3>Instructions</h3>
-            <ol class="instructions-list">
-                ${instructionsList}
-            </ol>
+            <div class="recipe-detail-layout">
+                <div class="recipe-main-column">
+                    <div class="recipe-detail-info">
+                        <div class="detail-info-box">
+                            <h4>Cuisine</h4>
+                            <p>${recipe.cuisine}</p>
+                        </div>
+                        <div class="detail-info-box">
+                            <h4>Preparation Time</h4>
+                            <p>${recipe.prepTime} minutes</p>
+                        </div>
+                        <div class="detail-info-box">
+                            <h4>Servings</h4>
+                            <p>${recipe.servings}</p>
+                        </div>
+                        <div class="detail-info-box">
+                            <h4>Difficulty</h4>
+                            <p>${recipe.difficulty}</p>
+                        </div>
+                    </div>
+
+                    <h3>Ingredients</h3>
+                    <ul class="ingredients-list">
+                        ${ingredientsList}
+                    </ul>
+
+                    <h3>Instructions</h3>
+                    <ol class="instructions-list">
+                        ${instructionsList}
+                    </ol>
+                </div>
+
+                <aside class="recipe-side-column">
+                    <h3>Nutritional Information</h3>
+                    <div class="nutrition-info">
+                        ${nutritionHTML}
+                    </div>
+                    ${renalGuidanceHTML}
+                    ${renalNoteHTML}
+                </aside>
+            </div>
         </div>
     `;
     
