@@ -25,10 +25,20 @@
             <section class="cuisine-selector">
                 <h2>Select Cuisine Type</h2>
                 <div class="cuisine-tabs">
-                    <button class="tab-btn active" onclick="filterByCuisine('all')">All Recipes</button>
-                    <button class="tab-btn" onclick="filterByCuisine('chinese')">🇨🇳 Chinese</button>
-                    <button class="tab-btn" onclick="filterByCuisine('western')">🇺🇸 Western</button>
-                    <button class="tab-btn" onclick="filterByCuisine('thai')">🇹🇭 Thai</button>
+                    <button class="tab-btn active" onclick="filterByCuisine('all', event)">All Recipes</button>
+                    <button class="tab-btn" onclick="filterByCuisine('chinese', event)">🇨🇳 Chinese</button>
+                    <button class="tab-btn" onclick="filterByCuisine('western', event)">🇺🇸 Western</button>
+                    <button class="tab-btn" onclick="filterByCuisine('thai', event)">🇹🇭 Thai</button>
+                </div>
+            </section>
+
+            <section class="renal-guidance-panel">
+                <h3>Renal Mineral Guidance (Per Meal)</h3>
+                <p>Use these targets as a practical guide. Individual CKD plans can be different, so confirm with your healthcare team.</p>
+                <div class="renal-guidance-targets">
+                    <div class="guidance-target">Potassium: ≤ 700 mg</div>
+                    <div class="guidance-target">Sodium: ≤ 600 mg</div>
+                    <div class="guidance-target">Phosphorus: ≤ 300 mg</div>
                 </div>
             </section>
 

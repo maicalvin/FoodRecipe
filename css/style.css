@@ -218,6 +218,40 @@ body {
     text-align: center;
 }
 
+.renal-guidance-panel {
+    background: #eef5ff;
+    border: 1px solid #d8e7ff;
+    border-left: 5px solid #667eea;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.renal-guidance-panel h3 {
+    color: #314a9f;
+    margin-bottom: 8px;
+}
+
+.renal-guidance-panel p {
+    color: #445;
+    margin-bottom: 12px;
+}
+
+.renal-guidance-targets {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.guidance-target {
+    background: white;
+    border: 1px solid #d8e7ff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 600;
+    color: #314a9f;
+}
+
 .cuisine-tabs {
     display: flex;
     gap: 10px;
@@ -403,6 +437,12 @@ body {
     line-height: 1.5;
 }
 
+.serving-weight-text {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
 .recipe-nutrition {
     display: flex;
     gap: 10px;
@@ -421,6 +461,13 @@ body {
 
 .nutrition-badge strong {
     color: #667eea;
+}
+
+.nutrition-total {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #314a9f;
+    font-weight: 600;
 }
 
 .recipe-card .btn {
@@ -632,6 +679,52 @@ body {
     line-height: 1.6;
 }
 
+.renal-guidance {
+    background: #f6f9ff;
+    border: 1px solid #dbe7ff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 18px;
+}
+
+.renal-guidance h4 {
+    color: #3e56a8;
+    margin-bottom: 10px;
+}
+
+.renal-guidance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+}
+
+.renal-guidance-item {
+    background: white;
+    border: 1px solid #e3ecff;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.guidance-label {
+    color: #556;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.guidance-value {
+    color: #314a9f;
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.guidance-status {
+    color: #556;
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
 /* Footer */
 .footer {
     background: #333;
@@ -644,6 +737,16 @@ body {
 
 .footer p {
     font-size: 0.9em;
+}
+
+.ingredient-result-nutrition {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 0.85em;
+    color: #314a9f;
+    font-weight: 600;
 }
 
 /* Loading State */

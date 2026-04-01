@@ -3,6 +3,12 @@ let allRecipes = [];
 let filteredRecipes = [];
 let currentCuisineFilter = 'all';
 
+const RENAL_GUIDANCE_MG = {
+    potassiumPerMeal: 700,
+    sodiumPerMeal: 600,
+    phosphorusPerMeal: 300
+};
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadRecipes();
@@ -11,7 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load recipes from JSON file
 function loadRecipes() {
     fetch('data/recipes.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Unable to load recipes (${response.status})`);
+            }
+            return response.json();
+        })
         .then(data => {
             allRecipes = data.recipes || [];
             filteredRecipes = [...allRecipes];
@@ -23,15 +34,48 @@ function loadRecipes() {
         });
 }
 
+function parseNutrientMg(value) {
+    if (value === undefined || value === null) return null;
+    const numeric = String(value).replace(/[^\d.]/g, '');
+    if (!numeric) return null;
+    const parsed = Number(numeric);
+    return Number.isNaN(parsed) ? null : parsed;
+}
+
+function formatMg(value) {
+    const mg = parseNutrientMg(value);
+    if (mg === null) return 'Not available';
+    return `${mg.toLocaleString()} mg`;
+}
+
+function getRenalLevel(valueMg, limitMg) {
+    if (valueMg === null) return 'No data';
+    if (valueMg <= limitMg * 0.75) return 'Good';
+    if (valueMg <= limitMg) return 'Watch';
+    return 'High';
+}
+
+function getServingWeight(recipe) {
+    return recipe.servingWeight || recipe.servingWeightGrams || recipe.weightPerServing || null;
+}
+
+function getServingWeightLabel(recipe) {
+    const servingWeight = getServingWeight(recipe);
+    if (!servingWeight) return 'Serving weight: Not provided';
+    return `Serving weight: ${servingWeight}`;
+}
+
 // Filter recipes by cuisine
-function filterByCuisine(cuisine) {
+function filterByCuisine(cuisine, clickEvent) {
     currentCuisineFilter = cuisine;
     
     // Update active tab
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    if (clickEvent && clickEvent.target) {
+        clickEvent.target.classList.add('active');
+    }
     
     // Filter recipes
     if (cuisine === 'all') {
@@ -128,11 +172,13 @@ function displayRecipes(recipes) {
                     <div class="recipe-detail-item">${recipe.mealType}</div>
                 </div>
                 <p class="recipe-description">${recipe.description}</p>
+                <div class="serving-weight-text">${getServingWeightLabel(recipe)}</div>
                 <div class="recipe-nutrition">
-                    <div class="nutrition-badge"><strong>K:</strong> ${recipe.nutritionInfo.potassium}</div>
-                    <div class="nutrition-badge"><strong>P:</strong> ${recipe.nutritionInfo.phosphorus}</div>
-                    <div class="nutrition-badge"><strong>Na:</strong> ${recipe.nutritionInfo.sodium}</div>
+                    <div class="nutrition-badge"><strong>K:</strong> ${formatMg(recipe.nutritionInfo.potassium)}</div>
+                    <div class="nutrition-badge"><strong>P:</strong> ${formatMg(recipe.nutritionInfo.phosphorus)}</div>
+                    <div class="nutrition-badge"><strong>Na:</strong> ${formatMg(recipe.nutritionInfo.sodium)}</div>
                 </div>
+                <div class="nutrition-total">Total K + Na: ${(parseNutrientMg(recipe.nutritionInfo.potassium) !== null && parseNutrientMg(recipe.nutritionInfo.sodium) !== null) ? `${(parseNutrientMg(recipe.nutritionInfo.potassium) + parseNutrientMg(recipe.nutritionInfo.sodium)).toLocaleString()} mg` : 'Not available'}</div>
                 <button class="btn btn-primary" style="margin-top: 15px;">View Recipe</button>
             </div>
         </div>
@@ -141,11 +187,18 @@ function displayRecipes(recipes) {
 
 // Open recipe modal
 function openRecipeModal(recipeId) {
-    const recipe = allRecipes.find(r => r.id === recipeId);
+    const normalizedRecipeId = Number(recipeId);
+    const recipe = allRecipes.find(r => Number(r.id) === normalizedRecipeId);
     if (!recipe) return;
     
     const modal = document.getElementById('recipeModal');
     const modalBody = document.getElementById('modalBody');
+
+    const potassiumMg = parseNutrientMg(recipe.nutritionInfo.potassium);
+    const sodiumMg = parseNutrientMg(recipe.nutritionInfo.sodium);
+    const phosphorusMg = parseNutrientMg(recipe.nutritionInfo.phosphorus);
+    const totalKNa = potassiumMg !== null && sodiumMg !== null ? potassiumMg + sodiumMg : null;
+    const servingWeightLabel = getServingWeightLabel(recipe);
     
     const ingredientsList = recipe.ingredients.map(ing => `<li>${ing}</li>`).join('');
     const instructionsList = recipe.instructions.map(inst => `<li>${inst}</li>`).join('');
@@ -158,15 +211,15 @@ function openRecipeModal(recipeId) {
             </div>
             <div class="nutrition-item">
                 <div class="label">Potassium</div>
-                <div class="value">${recipe.nutritionInfo.potassium}</div>
+                <div class="value">${formatMg(recipe.nutritionInfo.potassium)}</div>
             </div>
             <div class="nutrition-item">
                 <div class="label">Phosphorus</div>
-                <div class="value">${recipe.nutritionInfo.phosphorus}</div>
+                <div class="value">${formatMg(recipe.nutritionInfo.phosphorus)}</div>
             </div>
             <div class="nutrition-item">
                 <div class="label">Sodium</div>
-                <div class="value">${recipe.nutritionInfo.sodium}</div>
+                <div class="value">${formatMg(recipe.nutritionInfo.sodium)}</div>
             </div>
             <div class="nutrition-item">
                 <div class="label">Protein</div>
@@ -175,6 +228,38 @@ function openRecipeModal(recipeId) {
             <div class="nutrition-item">
                 <div class="label">Fiber</div>
                 <div class="value">${recipe.nutritionInfo.fiber}</div>
+            </div>
+            <div class="nutrition-item">
+                <div class="label">Total K + Na</div>
+                <div class="value">${totalKNa !== null ? `${totalKNa.toLocaleString()} mg` : 'Not available'}</div>
+            </div>
+        </div>
+    `;
+
+    const renalGuidanceHTML = `
+        <div class="renal-guidance">
+            <h4>Renal Mineral Guidance (Per Meal)</h4>
+            <div class="renal-guidance-grid">
+                <div class="renal-guidance-item">
+                    <div class="guidance-label">Potassium</div>
+                    <div class="guidance-value">${formatMg(recipe.nutritionInfo.potassium)}</div>
+                    <div class="guidance-status">Level: ${getRenalLevel(potassiumMg, RENAL_GUIDANCE_MG.potassiumPerMeal)} (target <= ${RENAL_GUIDANCE_MG.potassiumPerMeal} mg)</div>
+                </div>
+                <div class="renal-guidance-item">
+                    <div class="guidance-label">Sodium</div>
+                    <div class="guidance-value">${formatMg(recipe.nutritionInfo.sodium)}</div>
+                    <div class="guidance-status">Level: ${getRenalLevel(sodiumMg, RENAL_GUIDANCE_MG.sodiumPerMeal)} (target <= ${RENAL_GUIDANCE_MG.sodiumPerMeal} mg)</div>
+                </div>
+                <div class="renal-guidance-item">
+                    <div class="guidance-label">Phosphorus</div>
+                    <div class="guidance-value">${formatMg(recipe.nutritionInfo.phosphorus)}</div>
+                    <div class="guidance-status">Level: ${getRenalLevel(phosphorusMg, RENAL_GUIDANCE_MG.phosphorusPerMeal)} (target <= ${RENAL_GUIDANCE_MG.phosphorusPerMeal} mg)</div>
+                </div>
+                <div class="renal-guidance-item">
+                    <div class="guidance-label">Serving Weight</div>
+                    <div class="guidance-value">${servingWeightLabel.replace('Serving weight: ', '')}</div>
+                    <div class="guidance-status">Nutrient amounts above are shown per recipe serving.</div>
+                </div>
             </div>
         </div>
     `;
@@ -213,6 +298,8 @@ function openRecipeModal(recipeId) {
             <div class="nutrition-info">
                 ${nutritionHTML}
             </div>
+
+            ${renalGuidanceHTML}
             
             ${renalNoteHTML}
             
@@ -237,16 +324,16 @@ function closeRecipeModal() {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.onclick = function(clickEvent) {
     const modal = document.getElementById('recipeModal');
-    if (event.target === modal) {
+    if (clickEvent.target === modal) {
         modal.style.display = 'none';
     }
 }
 
-/==============================================
+// ==============================================
 // NEW FEATURES: PNG EXPORT & INGREDIENT FINDER
-//==============================================
+// ==============================================
 
 // Global variable for selected ingredients
 let selectedIngredients = [];
@@ -479,6 +566,10 @@ function displayIngredientResults(recipes) {
                         <div class="recipe-meta">
                             <span>⏱️ ${recipe.prepTime} min</span>
                             <span>👥 ${recipe.servings}</span>
+                        </div>
+                        <div class="ingredient-result-nutrition">
+                            <span>K: ${formatMg(recipe.nutritionInfo.potassium)}</span>
+                            <span>Na: ${formatMg(recipe.nutritionInfo.sodium)}</span>
                         </div>
                         <button class="btn btn-primary" style="width: 100%; margin-top: 10px;">View Recipe</button>
                     </div>
