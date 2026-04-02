@@ -36,8 +36,8 @@ function loadRecipes() {
             });
     };
 
-    fetchRecipeFile('data/recipes.json')
-        .catch(() => fetchRecipeFile('data/recipes-extended.json'))
+    fetchRecipeFile('data/recipes-extended.json')
+        .catch(() => fetchRecipeFile('data/recipes.json'))
         .then(data => {
             allRecipes = data.recipes || [];
             filteredRecipes = [...allRecipes];

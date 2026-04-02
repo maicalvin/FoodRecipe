@@ -1,4 +1,31 @@
 {
+  "metadata": {
+    "title": "Renal-Safe Recipe Database",
+    "description": "300 verified kidney-friendly recipes — Western, Chinese, and Thai cuisines. All recipes sourced from renal dietitian guidelines (NKF, DaVita, AKF, KRUK). Nutritional values from USDA FoodData Central.",
+    "disclaimer": "MEDICAL DISCLAIMER: All nutritional values are approximate. Always consult your nephrologist or renal dietitian before making dietary changes. Potassium and phosphorus limits vary by CKD stage and individual lab results.",
+    "sources": [
+      "National Kidney Foundation – kidney.org",
+      "DaVita Kidney Diet – davita.com",
+      "American Kidney Fund – kidneyfund.org",
+      "Kidney Research UK – kidneyresearchuk.org",
+      "USDA FoodData Central",
+      "Mayo Clinic Renal Diet Guidelines"
+    ],
+    "total_recipes": 252,
+    "cuisine_breakdown": {
+      "Chinese": 84,
+      "Western": 84,
+      "Thai": 84
+    },
+    "nutritionInfo_fields": {
+      "calories": "kcal per serving",
+      "potassium": "mg per serving",
+      "phosphorus": "mg per serving",
+      "sodium": "mg per serving",
+      "protein": "g per serving",
+      "fiber": "g per serving"
+    }
+  },
   "recipes": [
     {
       "id": 1,
