@@ -543,7 +543,7 @@ function downloadRecipeAsPNG() {
 
 // Extract unique ingredients from all recipes
 function extractUniqueIngredients() {
-    const ingredientsSet = new Set();
+    const ingredientsSet = new Set(INGREDIENT_KEYWORDS.map(keyword => keyword.label));
 
     allRecipes.forEach(recipe => {
         if (recipe.ingredients) {

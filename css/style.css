@@ -1141,8 +1141,17 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 14px;
+}
+
+.ingredient-list-header h4 {
+    width: 100%;
+    margin: 0;
+    color: white;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
 }
 
 .ingredient-list-header p {
@@ -1160,6 +1169,7 @@ body::before {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    min-height: 56px;
     max-height: 220px;
     overflow-y: auto;
     padding-right: 4px;
