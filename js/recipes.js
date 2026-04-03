@@ -45,9 +45,11 @@ function loadRecipes() {
             if (!allRecipes.length) {
                 recipeCountText.textContent = 'No recipes found in data files.';
                 recipesGrid.innerHTML = '<p class="loading">No recipes are available right now.</p>';
+                renderIngredientList();
                 return;
             }
 
+            renderIngredientList();
             displayRecipes(filteredRecipes);
         })
         .catch(error => {
@@ -433,6 +435,49 @@ window.onclick = function(clickEvent) {
 // Global variable for selected ingredients
 let selectedIngredients = [];
 
+const INGREDIENT_KEYWORDS = [
+    { label: 'apple', terms: ['apple'] },
+    { label: 'asparagus', terms: ['asparagus'] },
+    { label: 'bok choy', terms: ['bok choy'] },
+    { label: 'broccoli', terms: ['broccoli'] },
+    { label: 'cabbage', terms: ['cabbage'] },
+    { label: 'carrot', terms: ['carrot'] },
+    { label: 'cauliflower', terms: ['cauliflower'] },
+    { label: 'chicken', terms: ['chicken', 'gai'] },
+    { label: 'cod', terms: ['cod'] },
+    { label: 'cucumber', terms: ['cucumber'] },
+    { label: 'egg', terms: ['egg', 'omelette', 'frittata', 'custard'] },
+    { label: 'eggplant', terms: ['eggplant'] },
+    { label: 'fish', terms: ['fish', 'sea bass', 'tilapia'] },
+    { label: 'garlic', terms: ['garlic'] },
+    { label: 'ginger', terms: ['ginger', 'galangal'] },
+    { label: 'green beans', terms: ['green beans'] },
+    { label: 'herbs', terms: ['herb', 'basil', 'lemongrass', 'dill'] },
+    { label: 'leek', terms: ['leek'] },
+    { label: 'lemon', terms: ['lemon', 'lime'] },
+    { label: 'mango', terms: ['mango'] },
+    { label: 'mushroom', terms: ['mushroom', 'fungus'] },
+    { label: 'noodles', terms: ['noodle', 'noodles', 'pad see ew', 'pad woon sen'] },
+    { label: 'papaya', terms: ['papaya'] },
+    { label: 'pasta', terms: ['pasta'] },
+    { label: 'pear', terms: ['pear'] },
+    { label: 'pork', terms: ['pork', 'moo'] },
+    { label: 'potato', terms: ['potato'] },
+    { label: 'pumpkin', terms: ['pumpkin'] },
+    { label: 'quinoa', terms: ['quinoa'] },
+    { label: 'radish', terms: ['radish', 'daikon'] },
+    { label: 'rice', terms: ['rice', 'congee', 'pilaf'] },
+    { label: 'salmon', terms: ['salmon'] },
+    { label: 'seafood', terms: ['seafood', 'squid', 'crab'] },
+    { label: 'shrimp', terms: ['shrimp', 'prawn'] },
+    { label: 'spinach', terms: ['spinach'] },
+    { label: 'sweet potato', terms: ['sweet potato'] },
+    { label: 'tofu', terms: ['tofu'] },
+    { label: 'turkey', terms: ['turkey'] },
+    { label: 'watermelon', terms: ['watermelon'] },
+    { label: 'zucchini', terms: ['zucchini'] }
+];
+
 // Download recipe as PNG
 function downloadRecipeAsPNG() {
     const modalContent = document.querySelector('.recipe-detail');
@@ -499,30 +544,74 @@ function downloadRecipeAsPNG() {
 // Extract unique ingredients from all recipes
 function extractUniqueIngredients() {
     const ingredientsSet = new Set();
-    
+
     allRecipes.forEach(recipe => {
         if (recipe.ingredients) {
             recipe.ingredients.forEach(ingredient => {
-                // Extract base ingredient name (first word)
                 const baseIngredient = ingredient.split(',')[0].trim().toLowerCase();
-                // Remove common words and quantities
                 const cleanedIngredient = baseIngredient
                     .replace(/^[\d.\/½¼¾\s]+(cup|tbsp|tsp|g|oz|ml|lb|piece|clove|slice|lb)*\s*/i, '')
                     .trim();
-                if (cleanedIngredient && cleanedIngredient.length > 2) {
+                if (cleanedIngredient && cleanedIngredient.length > 2 && !cleanedIngredient.startsWith('see full recipe')) {
                     ingredientsSet.add(cleanedIngredient);
                 }
             });
         }
+
+        const searchableText = [recipe.name, recipe.description, ...(recipe.ingredients || [])]
+            .join(' ')
+            .toLowerCase();
+
+        INGREDIENT_KEYWORDS.forEach(keyword => {
+            if (keyword.terms.some(term => searchableText.includes(term))) {
+                ingredientsSet.add(keyword.label);
+            }
+        });
     });
-    
+
     return Array.from(ingredientsSet).sort();
+}
+
+function renderIngredientList(filterText = '') {
+    const ingredientList = document.getElementById('ingredientList');
+    if (!ingredientList) return;
+
+    const normalizedFilter = filterText.toLowerCase().trim();
+    const visibleIngredients = extractUniqueIngredients().filter(ingredient =>
+        !normalizedFilter || ingredient.includes(normalizedFilter)
+    );
+
+    if (!visibleIngredients.length) {
+        ingredientList.innerHTML = '<p class="ingredient-list-empty">No ingredients match your search.</p>';
+        return;
+    }
+
+    ingredientList.innerHTML = visibleIngredients.map(ingredient => `
+        <button
+            type="button"
+            class="ingredient-option${selectedIngredients.includes(ingredient) ? ' active' : ''}"
+            onclick="toggleIngredientSelection('${ingredient.replace(/'/g, "\\'")}')"
+        >
+            ${ingredient}
+        </button>
+    `).join('');
+}
+
+function toggleIngredientSelection(ingredient) {
+    if (selectedIngredients.includes(ingredient)) {
+        removeIngredientTag(ingredient);
+        return;
+    }
+
+    addIngredientTag(ingredient);
 }
 
 // Update ingredient suggestions
 function updateIngredientSuggestions() {
     const input = document.getElementById('ingredientInput').value.toLowerCase().trim();
     const suggestionsDiv = document.getElementById('ingredientSuggestions');
+
+    renderIngredientList(input);
     
     if (input.length < 1) {
         suggestionsDiv.style.display = 'none';
@@ -557,12 +646,26 @@ function addIngredientTag(ingredient) {
     document.getElementById('ingredientInput').value = '';
     document.getElementById('ingredientSuggestions').style.display = 'none';
     updateIngredientTags();
+    renderIngredientList();
 }
 
 // Remove ingredient tag
 function removeIngredientTag(ingredient) {
     selectedIngredients = selectedIngredients.filter(ing => ing !== ingredient);
     updateIngredientTags();
+    renderIngredientList(document.getElementById('ingredientInput').value);
+}
+
+function clearSelectedIngredients() {
+    selectedIngredients = [];
+    updateIngredientTags();
+    renderIngredientList(document.getElementById('ingredientInput').value);
+}
+
+function getRecipeSearchableIngredients(recipe) {
+    return [recipe.name, recipe.description, ...(recipe.ingredients || [])]
+        .join(' ')
+        .toLowerCase();
 }
 
 // Update ingredient tags display
@@ -590,14 +693,10 @@ function findRecipesByIngredients() {
     }
     
     const matchedRecipes = allRecipes.filter(recipe => {
-        if (!recipe.ingredients) return false;
+        const recipeSearchableText = getRecipeSearchableIngredients(recipe);
         
-        // Convert recipe ingredients to lowercase for matching
-        const recipeIngredientsLower = recipe.ingredients.map(ing => ing.toLowerCase());
-        
-        // Check how many selected ingredients are in this recipe
         const matchCount = selectedIngredients.filter(selected => 
-            recipeIngredientsLower.some(recipeIng => recipeIng.includes(selected))
+            recipeSearchableText.includes(selected)
         ).length;
         
         return matchCount > 0;
@@ -605,15 +704,15 @@ function findRecipesByIngredients() {
     
     // Sort by best match (most ingredients matched)
     matchedRecipes.sort((a, b) => {
-        const aRecipeIngredientsLower = a.ingredients.map(ing => ing.toLowerCase());
-        const bRecipeIngredientsLower = b.ingredients.map(ing => ing.toLowerCase());
+        const aRecipeSearchableText = getRecipeSearchableIngredients(a);
+        const bRecipeSearchableText = getRecipeSearchableIngredients(b);
         
         const aMatches = selectedIngredients.filter(selected => 
-            aRecipeIngredientsLower.some(recipeIng => recipeIng.includes(selected))
+            aRecipeSearchableText.includes(selected)
         ).length;
         
         const bMatches = selectedIngredients.filter(selected => 
-            bRecipeIngredientsLower.some(recipeIng => recipeIng.includes(selected))
+            bRecipeSearchableText.includes(selected)
         ).length;
         
         return bMatches - aMatches;
@@ -644,10 +743,9 @@ function displayIngredientResults(recipes) {
         </div>
         <div class="ingredient-results-grid">
             ${recipes.map(recipe => {
-                // Calculate match percentage
-                const recipeIngredientsLower = recipe.ingredients.map(ing => ing.toLowerCase());
+                const recipeSearchableText = getRecipeSearchableIngredients(recipe);
                 const matches = selectedIngredients.filter(selected => 
-                    recipeIngredientsLower.some(recipeIng => recipeIng.includes(selected))
+                    recipeSearchableText.includes(selected)
                 ).length;
                 const matchPercentage = Math.round((matches / selectedIngredients.length) * 100);
                 
@@ -684,4 +782,9 @@ document.addEventListener('click', function(event) {
     if (suggestionsDiv && !ingredientInput.contains(event.target) && !suggestionsDiv.contains(event.target)) {
         suggestionsDiv.style.display = 'none';
     }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateIngredientTags();
+    renderIngredientList();
 });

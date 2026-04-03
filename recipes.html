@@ -59,6 +59,13 @@
                            class="ingredient-input" onkeyup="updateIngredientSuggestions()">
                     <div class="ingredient-suggestions" id="ingredientSuggestions" style="display: none;"></div>
                 </div>
+                <div class="ingredient-list-panel">
+                    <div class="ingredient-list-header">
+                        <p>Choose from the ingredient list below. You can select multiple items.</p>
+                        <button class="btn btn-small ingredient-clear-btn" type="button" onclick="clearSelectedIngredients()">Clear Selected</button>
+                    </div>
+                    <div class="ingredient-list" id="ingredientList"></div>
+                </div>
                 <div class="selected-ingredients">
                     <p>Selected Ingredients:</p>
                     <div class="ingredients-tags" id="selectedIngredientsTags"></div>
