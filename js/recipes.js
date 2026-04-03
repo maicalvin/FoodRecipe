@@ -39,7 +39,7 @@ function loadRecipes() {
     fetchRecipeFile('data/recipes-extended.json')
         .catch(() => fetchRecipeFile('data/recipes.json'))
         .then(data => {
-            allRecipes = data.recipes || [];
+            allRecipes = extractRecipesFromPayload(data).map(normalizeRecipe);
             filteredRecipes = [...allRecipes];
 
             if (!allRecipes.length) {
@@ -93,6 +93,67 @@ function getServingWeightLabel(recipe) {
     const servingWeight = getServingWeight(recipe);
     if (!servingWeight) return 'Serving weight: Not provided';
     return `Serving weight: ${servingWeight}`;
+}
+
+function hasValue(value) {
+    return value !== undefined && value !== null && value !== '';
+}
+
+function formatNutrientFromNumber(value, unit) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return 'Not available';
+    if (unit === 'mg') return `${Math.round(numeric)}mg`;
+    if (unit === 'g') return `${numeric.toFixed(1)}g`;
+    return String(Math.round(numeric));
+}
+
+function normalizeRecipe(recipe) {
+    const perServing = recipe.nutrition_per_serving || {};
+    const sourceNutrition = recipe.nutritionInfo || {};
+
+    return {
+        ...recipe,
+        cuisine: recipe.cuisine || 'General',
+        emoji: recipe.emoji || '🍽️',
+        description: recipe.description || 'Nutrition-focused recipe.',
+        mealType: recipe.mealType || 'meal',
+        prepTime: Number.isFinite(Number(recipe.prepTime)) ? Number(recipe.prepTime) : 30,
+        servings: Number.isFinite(Number(recipe.servings)) ? Number(recipe.servings) : 1,
+        difficulty: recipe.difficulty || 'Easy',
+        ingredients: Array.isArray(recipe.ingredients) && recipe.ingredients.length
+            ? recipe.ingredients
+            : ['See full recipe details from your source data.'],
+        instructions: Array.isArray(recipe.instructions) && recipe.instructions.length
+            ? recipe.instructions
+            : ['Prepare ingredients and cook using your preferred healthy method.'],
+        renalNote: recipe.renalNote || 'Nutrition values shown are per serving.',
+        nutritionInfo: {
+            calories: hasValue(sourceNutrition.calories)
+                ? sourceNutrition.calories
+                : formatNutrientFromNumber(perServing.calories, null),
+            potassium: hasValue(sourceNutrition.potassium)
+                ? sourceNutrition.potassium
+                : formatNutrientFromNumber(perServing.potassium, 'mg'),
+            phosphorus: hasValue(sourceNutrition.phosphorus)
+                ? sourceNutrition.phosphorus
+                : formatNutrientFromNumber(perServing.phosphorus, 'mg'),
+            sodium: hasValue(sourceNutrition.sodium)
+                ? sourceNutrition.sodium
+                : formatNutrientFromNumber(perServing.sodium, 'mg'),
+            protein: hasValue(sourceNutrition.protein)
+                ? sourceNutrition.protein
+                : formatNutrientFromNumber(perServing.protein, 'g'),
+            fiber: hasValue(sourceNutrition.fiber)
+                ? sourceNutrition.fiber
+                : '0.0g'
+        }
+    };
+}
+
+function extractRecipesFromPayload(data) {
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.recipes)) return data.recipes;
+    return [];
 }
 
 // Filter recipes by cuisine
