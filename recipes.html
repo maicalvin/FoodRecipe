@@ -118,6 +118,103 @@
         </footer>
     </div>
 
+    <button
+        type="button"
+        id="calculatorDrawerToggle"
+        class="calculator-drawer-toggle"
+        aria-controls="calculatorDrawer"
+        aria-expanded="false"
+        onclick="toggleCalculatorDrawer()"
+    >
+        🧮 Open Calculator
+    </button>
+
+    <div id="calculatorDrawerOverlay" class="calculator-drawer-overlay" onclick="closeCalculatorDrawer()"></div>
+
+    <aside id="calculatorDrawer" class="calculator-drawer" aria-hidden="true">
+        <div class="calculator-drawer-shell">
+            <div class="calculator-drawer-header">
+                <div>
+                    <h3>🧮 Dish Nutrition Calculator</h3>
+                    <p>Select ingredients, enter grams used, and keep a running total for your dish.</p>
+                </div>
+                <button type="button" class="calculator-drawer-close" onclick="closeCalculatorDrawer()" aria-label="Close calculator">×</button>
+            </div>
+
+            <section class="food-calculator-section">
+                <div class="calculator-layout">
+                    <div class="calculator-builder-card">
+                        <label class="calculator-label" for="calculatorIngredientSelect">Choose an ingredient from the list</label>
+                        <select id="calculatorIngredientSelect" class="calculator-select" size="10"></select>
+
+                        <div class="calculator-controls-row">
+                            <div class="calculator-input-group">
+                                <label class="calculator-label" for="calculatorAmountInput">Amount in grams</label>
+                                <input type="number" id="calculatorAmountInput" class="calculator-number-input" min="1" step="1" value="100">
+                            </div>
+                            <button class="btn btn-primary calculator-add-btn" type="button" onclick="addCalculatorIngredient()">Add Ingredient</button>
+                        </div>
+
+                        <p class="calculator-footnote" id="calculatorDataStatus">Loading ingredient nutrition list...</p>
+                        <p class="calculator-footnote">Nutrition values are calculated per 100 g ingredient data.</p>
+                    </div>
+
+                    <div class="calculator-summary-card">
+                        <h4>Dish Totals</h4>
+                        <div class="calculator-total-grid">
+                            <div class="calculator-total-item">
+                                <span class="calculator-total-label">Calories</span>
+                                <strong id="calculatorTotalCalories">0 kcal</strong>
+                            </div>
+                            <div class="calculator-total-item">
+                                <span class="calculator-total-label">Protein</span>
+                                <strong id="calculatorTotalProtein">0.0 g</strong>
+                            </div>
+                            <div class="calculator-total-item">
+                                <span class="calculator-total-label">Potassium</span>
+                                <strong id="calculatorTotalPotassium">0 mg</strong>
+                            </div>
+                            <div class="calculator-total-item">
+                                <span class="calculator-total-label">Phosphorus</span>
+                                <strong id="calculatorTotalPhosphorus">0 mg</strong>
+                            </div>
+                            <div class="calculator-total-item">
+                                <span class="calculator-total-label">Sodium</span>
+                                <strong id="calculatorTotalSodium">0 mg</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-ingredients-card">
+                    <div class="calculator-ingredients-header">
+                        <h4>Ingredients Added To Your Dish</h4>
+                        <button class="btn btn-small ingredient-clear-btn" type="button" onclick="clearCalculatorIngredients()">Clear Dish</button>
+                    </div>
+                    <div class="calculator-table-wrapper">
+                        <table class="calculator-table">
+                            <thead>
+                                <tr>
+                                    <th>Ingredient</th>
+                                    <th>Grams</th>
+                                    <th>Protein</th>
+                                    <th>Potassium</th>
+                                    <th>Sodium</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calculatorIngredientsBody">
+                                <tr>
+                                    <td colspan="6" class="calculator-empty-state">Add ingredients from the list to start calculating your dish.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </aside>
+
     <!-- Recipe Modal -->
     <div id="recipeModal" class="modal" style="display: none;">
         <div class="modal-content">

@@ -1333,6 +1333,259 @@ body::before {
     margin-top: 40px;
 }
 
+.calculator-drawer-toggle {
+    position: fixed;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    z-index: 1100;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #ff6c47 0%, #ff8f47 100%);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 16px 30px rgba(176, 79, 36, 0.3);
+    cursor: pointer;
+    transition: transform 0.25s ease, right 0.25s ease, box-shadow 0.25s ease;
+}
+
+.calculator-drawer-toggle:hover {
+    transform: translateY(calc(-50% - 2px));
+    box-shadow: 0 20px 34px rgba(176, 79, 36, 0.36);
+}
+
+.calculator-drawer-toggle.is-open {
+    right: min(480px, 100vw - 92px);
+}
+
+.calculator-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(56, 31, 23, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 1080;
+}
+
+.calculator-drawer-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.calculator-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(460px, 100vw);
+    height: 100vh;
+    background: #fff7ef;
+    box-shadow: -22px 0 48px rgba(62, 31, 20, 0.18);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1090;
+}
+
+.calculator-drawer.is-open {
+    transform: translateX(0);
+}
+
+.calculator-drawer-shell {
+    height: 100%;
+    overflow-y: auto;
+    padding: 22px;
+}
+
+.calculator-drawer-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.calculator-drawer-header h3 {
+    margin: 0 0 8px;
+    color: #8d4426;
+}
+
+.calculator-drawer-header p {
+    margin: 0;
+    color: #7b5a47;
+}
+
+.calculator-drawer-close {
+    border: none;
+    background: #ffe0cf;
+    color: #9f431d;
+    border-radius: 999px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.food-calculator-section {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+}
+
+.food-calculator-section .finder-header h3 {
+    color: #9b4c27;
+}
+
+.food-calculator-section .finder-header p {
+    color: #7b5a47;
+}
+
+.calculator-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.calculator-builder-card,
+.calculator-summary-card,
+.calculator-ingredients-card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 10px 24px rgba(128, 54, 45, 0.08);
+}
+
+.calculator-label {
+    display: block;
+    font-weight: 600;
+    color: #7b402b;
+    margin-bottom: 8px;
+}
+
+.calculator-select,
+.calculator-number-input {
+    width: 100%;
+    border: 1px solid #e2c9b5;
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #fffdf9;
+    color: #4b372a;
+    font-size: 0.98em;
+}
+
+.calculator-select {
+    min-height: 260px;
+}
+
+.calculator-controls-row {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    margin-top: 16px;
+}
+
+.calculator-input-group {
+    flex: 1;
+}
+
+.calculator-add-btn {
+    min-width: 170px;
+    height: 48px;
+}
+
+.calculator-footnote {
+    color: #8b6a58;
+    font-size: 0.92em;
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.calculator-summary-card h4,
+.calculator-ingredients-card h4 {
+    color: #9b4c27;
+    margin-bottom: 16px;
+}
+
+.calculator-total-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.calculator-total-item {
+    background: #fff5ee;
+    border: 1px solid #f1d0ba;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.calculator-total-label {
+    display: block;
+    font-size: 0.88em;
+    color: #8a654f;
+    margin-bottom: 6px;
+}
+
+.calculator-total-item strong {
+    color: #7f3924;
+    font-size: 1.05em;
+}
+
+.calculator-ingredients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.calculator-table-wrapper {
+    overflow-x: auto;
+}
+
+.calculator-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calculator-table th,
+.calculator-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f0dfd3;
+    text-align: left;
+    color: #5b463a;
+}
+
+.calculator-table th {
+    color: #8a4c2e;
+    font-size: 0.9em;
+    background: #fff8f2;
+}
+
+.calculator-empty-state {
+    text-align: center;
+    color: #9a8578;
+    font-style: italic;
+}
+
+.calculator-remove-btn {
+    border: none;
+    background: #ffe2d2;
+    color: #9a3f1e;
+    border-radius: 999px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.calculator-remove-btn:hover {
+    background: #ffd2bc;
+}
+
 .ingredient-results h3 {
     color: #333;
     margin-bottom: 20px;
@@ -1547,9 +1800,54 @@ body::before {
         padding: 20px;
     }
 
+    .food-calculator-section {
+        padding: 0;
+    }
+
     .ingredient-list-header {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .calculator-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .calculator-controls-row,
+    .calculator-ingredients-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calculator-add-btn {
+        width: 100%;
+    }
+
+    .calculator-total-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calculator-drawer {
+        width: 100vw;
+    }
+
+    .calculator-drawer-shell {
+        padding: 18px;
+    }
+
+    .calculator-drawer-toggle {
+        top: auto;
+        bottom: 18px;
+        right: 18px;
+        transform: none;
+    }
+
+    .calculator-drawer-toggle:hover {
+        transform: translateY(-2px);
+    }
+
+    .calculator-drawer-toggle.is-open {
+        right: 18px;
     }
 
     .ingredient-finder-section h2 {

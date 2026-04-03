@@ -2,6 +2,7 @@
 let allRecipes = [];
 let filteredRecipes = [];
 let currentCuisineFilter = 'all';
+let isCalculatorDrawerOpen = false;
 
 const RENAL_GUIDANCE_MG = {
     potassiumPerMeal: 700,
@@ -434,6 +435,8 @@ window.onclick = function(clickEvent) {
 
 // Global variable for selected ingredients
 let selectedIngredients = [];
+let ingredientNutritionDatabase = {};
+let calculatorDishIngredients = [];
 
 const INGREDIENT_KEYWORDS = [
     { label: 'apple', terms: ['apple'] },
@@ -662,6 +665,194 @@ function clearSelectedIngredients() {
     renderIngredientList(document.getElementById('ingredientInput').value);
 }
 
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function loadIngredientNutrition() {
+    const status = document.getElementById('calculatorDataStatus');
+
+    fetch('data/ingredient-nutrition.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Unable to load ingredient data (${response.status})`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            ingredientNutritionDatabase = data || {};
+            renderCalculatorIngredientOptions();
+            renderCalculatorDishIngredients();
+
+            if (status) {
+                status.textContent = `${Object.keys(ingredientNutritionDatabase).length} ingredients ready for calculation.`;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading ingredient nutrition data:', error);
+            if (status) {
+                status.textContent = 'Could not load ingredient nutrition data right now.';
+            }
+        });
+}
+
+function renderCalculatorIngredientOptions() {
+    const select = document.getElementById('calculatorIngredientSelect');
+    if (!select) return;
+
+    const ingredientNames = Object.keys(ingredientNutritionDatabase).sort((left, right) => left.localeCompare(right));
+
+    if (!ingredientNames.length) {
+        select.innerHTML = '<option value="">Ingredient list unavailable</option>';
+        return;
+    }
+
+    select.innerHTML = ingredientNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+}
+
+function calculateIngredientNutrients(ingredientName, grams) {
+    const perHundred = ingredientNutritionDatabase[ingredientName];
+    const factor = grams / 100;
+
+    return {
+        calories: perHundred.calories * factor,
+        protein: perHundred.protein * factor,
+        potassium: perHundred.potassium * factor,
+        phosphorus: perHundred.phosphorus * factor,
+        sodium: perHundred.sodium * factor
+    };
+}
+
+function addCalculatorIngredient() {
+    const select = document.getElementById('calculatorIngredientSelect');
+    const amountInput = document.getElementById('calculatorAmountInput');
+
+    if (!select || !amountInput) return;
+
+    const ingredientName = select.value;
+    const grams = Number(amountInput.value);
+
+    if (!ingredientName || !ingredientNutritionDatabase[ingredientName]) {
+        alert('Please choose an ingredient from the list.');
+        return;
+    }
+
+    if (!Number.isFinite(grams) || grams <= 0) {
+        alert('Please enter a valid amount in grams.');
+        return;
+    }
+
+    calculatorDishIngredients.push({
+        id: `${ingredientName}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        name: ingredientName,
+        grams,
+        nutrients: calculateIngredientNutrients(ingredientName, grams)
+    });
+
+    renderCalculatorDishIngredients();
+    amountInput.value = '100';
+}
+
+function removeCalculatorIngredient(entryId) {
+    calculatorDishIngredients = calculatorDishIngredients.filter(entry => entry.id !== entryId);
+    renderCalculatorDishIngredients();
+}
+
+function clearCalculatorIngredients() {
+    calculatorDishIngredients = [];
+    renderCalculatorDishIngredients();
+}
+
+function syncCalculatorDrawerState() {
+    const drawer = document.getElementById('calculatorDrawer');
+    const overlay = document.getElementById('calculatorDrawerOverlay');
+    const toggle = document.getElementById('calculatorDrawerToggle');
+
+    if (!drawer || !overlay || !toggle) return;
+
+    drawer.classList.toggle('is-open', isCalculatorDrawerOpen);
+    overlay.classList.toggle('is-open', isCalculatorDrawerOpen);
+    toggle.classList.toggle('is-open', isCalculatorDrawerOpen);
+    drawer.setAttribute('aria-hidden', String(!isCalculatorDrawerOpen));
+    toggle.setAttribute('aria-expanded', String(isCalculatorDrawerOpen));
+    toggle.textContent = isCalculatorDrawerOpen ? '🧮 Close Calculator' : '🧮 Open Calculator';
+}
+
+function openCalculatorDrawer() {
+    isCalculatorDrawerOpen = true;
+    syncCalculatorDrawerState();
+}
+
+function closeCalculatorDrawer() {
+    isCalculatorDrawerOpen = false;
+    syncCalculatorDrawerState();
+}
+
+function toggleCalculatorDrawer() {
+    isCalculatorDrawerOpen = !isCalculatorDrawerOpen;
+    syncCalculatorDrawerState();
+}
+
+function updateCalculatorTotals() {
+    const totals = calculatorDishIngredients.reduce((accumulator, entry) => {
+        accumulator.calories += entry.nutrients.calories;
+        accumulator.protein += entry.nutrients.protein;
+        accumulator.potassium += entry.nutrients.potassium;
+        accumulator.phosphorus += entry.nutrients.phosphorus;
+        accumulator.sodium += entry.nutrients.sodium;
+        return accumulator;
+    }, {
+        calories: 0,
+        protein: 0,
+        potassium: 0,
+        phosphorus: 0,
+        sodium: 0
+    });
+
+    const caloriesEl = document.getElementById('calculatorTotalCalories');
+    const proteinEl = document.getElementById('calculatorTotalProtein');
+    const potassiumEl = document.getElementById('calculatorTotalPotassium');
+    const phosphorusEl = document.getElementById('calculatorTotalPhosphorus');
+    const sodiumEl = document.getElementById('calculatorTotalSodium');
+
+    if (caloriesEl) caloriesEl.textContent = `${Math.round(totals.calories)} kcal`;
+    if (proteinEl) proteinEl.textContent = `${totals.protein.toFixed(1)} g`;
+    if (potassiumEl) potassiumEl.textContent = `${Math.round(totals.potassium).toLocaleString()} mg`;
+    if (phosphorusEl) phosphorusEl.textContent = `${Math.round(totals.phosphorus).toLocaleString()} mg`;
+    if (sodiumEl) sodiumEl.textContent = `${Math.round(totals.sodium).toLocaleString()} mg`;
+}
+
+function renderCalculatorDishIngredients() {
+    const body = document.getElementById('calculatorIngredientsBody');
+    if (!body) return;
+
+    if (!calculatorDishIngredients.length) {
+        body.innerHTML = '<tr><td colspan="6" class="calculator-empty-state">Add ingredients from the list to start calculating your dish.</td></tr>';
+        updateCalculatorTotals();
+        return;
+    }
+
+    body.innerHTML = calculatorDishIngredients.map(entry => `
+        <tr>
+            <td>${escapeHtml(entry.name)}</td>
+            <td>${Math.round(entry.grams)} g</td>
+            <td>${entry.nutrients.protein.toFixed(1)} g</td>
+            <td>${Math.round(entry.nutrients.potassium).toLocaleString()} mg</td>
+            <td>${Math.round(entry.nutrients.sodium).toLocaleString()} mg</td>
+            <td>
+                <button type="button" class="calculator-remove-btn" onclick="removeCalculatorIngredient('${entry.id}')">Remove</button>
+            </td>
+        </tr>
+    `).join('');
+
+    updateCalculatorTotals();
+}
+
 function getRecipeSearchableIngredients(recipe) {
     return [recipe.name, recipe.description, ...(recipe.ingredients || [])]
         .join(' ')
@@ -784,7 +975,16 @@ document.addEventListener('click', function(event) {
     }
 });
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && isCalculatorDrawerOpen) {
+        closeCalculatorDrawer();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     updateIngredientTags();
     renderIngredientList();
+    renderCalculatorDishIngredients();
+    loadIngredientNutrition();
+    syncCalculatorDrawerState();
 });
